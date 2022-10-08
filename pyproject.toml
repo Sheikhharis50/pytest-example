@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pytest-testing"
+name = "pytest-example"
 version = "0.1.0"
 description = ""
 authors = ["Sheikh Haris Zahid <sheikh.haris.zahid@aiworks.ai>"]
