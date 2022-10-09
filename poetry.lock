@@ -189,6 +189,19 @@ python-versions = ">=3.5"
 traitlets = "*"
 
 [[package]]
+name = "mock"
+version = "4.0.3"
+description = "Rolling backport of unittest.mock for all Pythons"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.extras]
+build = ["twine", "wheel", "blurb"]
+docs = ["sphinx"]
+test = ["pytest (<5.4)", "pytest-cov"]
+
+[[package]]
 name = "packaging"
 version = "21.3"
 description = "Core utilities for Python packages"
@@ -451,7 +464,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "0c8231d0ad635adf7cd165465c2415dab7c6407a43dfaf5af4120796008c2099"
+content-hash = "b06ab11824019c6afe2d2b99c31f8b9d037ca456187c60eb7c509d03bccc5ed2"
 
 [metadata.files]
 appnope = []
@@ -469,6 +482,7 @@ iniconfig = []
 ipython = []
 jedi = []
 matplotlib-inline = []
+mock = []
 packaging = []
 parso = []
 pexpect = []
