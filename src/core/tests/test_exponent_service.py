@@ -1,3 +1,4 @@
+import random
 from dataclasses import dataclass
 from typing import Sequence
 
@@ -115,7 +116,7 @@ class TestExponentService:
     """
 
     @pytest.mark.parametrize(
-        ("_input", "_expected_result"),
+        ("_input", "_expected_initialization"),
         [
             ((2, 2), [1, 2]),
             ((-1, -1), []),
@@ -123,14 +124,16 @@ class TestExponentService:
             ((2, -1), [1, 2]),
         ],
     )
-    def test_get_exponents_with_resources(self, mocker, _input, _expected_result):
-        mocker.patch(
-            "core.services.ExponentService._store_exponents", return_value=None
-        )
+    def test_should_define_service(self, _input, _expected_initialization):
+        instance = ExponentService(*_input)
 
-        _actual_result = ExponentService.get_exponents(*_input)
+        assert instance.resources == _expected_initialization
 
-        assert _actual_result == _expected_result
+    def test_should_not_define_service(self):
+        with pytest.raises(TypeError) as e:
+            ExponentService()
+
+        assert "required positional argument" in str(e.value)
 
     @pytest.mark.parametrize(
         ("_input", "_expected_result"),
@@ -141,16 +144,51 @@ class TestExponentService:
             ((2, -1), [1, 2]),
         ],
     )
-    def test_get_exponents_without_resources(self, mocker, _input, _expected_result):
-        mocker.patch("core.services.ExponentService.__init__", return_value=None)
+    def test_get_exponents(self, mocker, _input, _expected_result):
         mocker.patch(
             "core.services.ExponentService._store_exponents", return_value=None
         )
 
-        with pytest.raises(AttributeError) as e:
-            ExponentService.get_exponents(*_input)
+        _actual_result = ExponentService.get_exponents(*_input)
 
-        assert "object has no attribute" in str(e.value)
+        assert _actual_result == _expected_result
+
+    @pytest.mark.parametrize(
+        ("_input", "_initial", "_expected_result"),
+        [
+            ((2, 2), [1, 2], [4, 4]),  # Positive values
+            ((-1, -1), [], []),  # Negative values
+            ((-1, 2), [], []),  # Negative number of values with positive exponent
+            (
+                (2, -1),
+                [1, 2],
+                [4, 4],
+            ),  # Positive number of values with negative exponent
+        ],
+    )
+    def test_store_exponents(self, mocker, _input, _initial, _expected_result):
+        mocker.patch(
+            "core.services.ExponentService._calculate_exponent", return_value=4
+        )
+        instance = ExponentService(*_input)
+
+        assert instance.resources == _initial
+        instance._store_exponents()
+        assert instance.resources == _expected_result
+
+    @pytest.mark.parametrize(
+        ("_exponent_input", "_input", "_expected_result"),
+        [
+            (0, 1, 1),  # Zero exponent
+            (2, 2, 4),  # Positive exponent
+            (-1, 2, 0.5),  # Negative exponent
+            (100, 2, 1_267_650_600_228_229_401_496_703_205_376),  # Large exponent
+        ],
+    )
+    def test_calculate_exponent(self, _exponent_input, _input, _expected_result):
+        instance = ExponentService(n=random.randint(1, 100), exponent=_exponent_input)
+
+        assert instance._calculate_exponent(_input) == _expected_result
 
 
 """
